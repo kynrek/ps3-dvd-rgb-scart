@@ -1,0 +1,6 @@
+fw/
+backup/
+*.bin
+*.PUP
+*.self
+*.elf
