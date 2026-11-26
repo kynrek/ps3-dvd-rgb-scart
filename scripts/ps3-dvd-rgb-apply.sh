@@ -1,7 +1,7 @@
 #!/bin/bash
 # Re-apply the PS3 DVD-over-RGB-SCART fix (RAM only) via webMAN, for VSH 4.92 or 4.93 CEX. Checks bytes first.
 # Usage: ps3-dvd-rgb-apply.sh [ip]   (exit 0 = applied/already applied, 1 = PS3 offline, 2 = unsupported/unexpected)
-IP=${1:-192.168.1.239}; DIR=$(dirname "$(readlink -f "$0")"); PY=${PYTHON:-python3}
+IP=${1:-${PS3_IP:-192.168.1.239}}; export PS3_IP=$IP; DIR=$(dirname "$(readlink -f "$0")"); PY=${PYTHON:-python3}
 S="http://$IP/setmem.ps3mapi?proc=0x1000300&oper=0"
 rd() { python3 -I "$DIR/vshmem.py" "$1" 4 2>/dev/null | awk '{print $2}'; }
 page=$(curl -s -m 8 "http://$IP/cpursx.ps3") || exit 1

@@ -2,7 +2,7 @@
 """Snapshot VSH AV-settings objects (4.92) to a JSON file: avsnap.py <name>; avsnap.py diff a b"""
 import sys, json, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import vshmem
-OUT = '/home/kynrek/claude/ps3/snaps'; os.makedirs(OUT, exist_ok=True)
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'snaps'); os.makedirs(OUT, exist_ok=True)
 def snap(name):
     root = vshmem.u32(0x738b34); regions = {'root': (root, 0x84)}
     r = vshmem.read(root, 0x84)

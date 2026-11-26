@@ -189,4 +189,19 @@ signal. The DVD framebuffer format (0x10) evidently still converts correctly ont
   - The installed vsh.self sha1 is e487318d…, identical to the checked Evilnat PUP copy.
   - boot_plugins.txt (webMAN) and autoexec.bat survived.
   - **The boot script applied the fix by itself.** On 4.93, hook 0x5ded64 = 480DD14C, nomv 0x473a48 = 3BE00000, and the cave is byte-identical; the log is at 0x751600.
-- The PUP is still on the HDD (`/dev_hdd0/GAMES/PS3UPDATE_493`, 206 MB) and in r720 `cfw493/rar/`. Recovery Mode needs it on a USB stick.
+- The PUP was deleted from the PS3 HDD at the user's request. The verified copy is kept on r720 at `cfw493/rar/PS3/UPDATE/PS3UPDAT.PUP` (md5 d3af31ce…); for Recovery Mode, copy it to a USB stick.
+
+## 15. DVD region lock (checked 2026-11-26)
+- The DVD-Video region check is in `dev_flash/vsh/module/bdp_disccheck_plugin.sprx`. Function 0x1478 returns error 0x67 when
+  `bl 0x1360` (region test) fails. 0x1360 maps the console target (lhz +0x72, 0x84 = USA → DVD region 1 bit) and ANDs it with the
+  disc's region mask (+0x34), so a set bit means the disc is blocked.
+- **Already disabled by Cobra 8.5** (Evilnat stage2.bin): its patch table has hash 0x9940000000003000 → {0x152C, `38600001` li r3,1,
+  condition_true} (stage2.bin file offset 0x17250). That's the same as MAMBA's `dvd_video_region_check_offset` ("kills standard
+  dvd-video region protection, not RCE"). The hash2 top 20 bits (0x99400) match both the OFW and the Evilnat plugin.
+- Evilnat's flash copy of the plugin also changes 0x15C8/0x15D4 `li r9,0x66/0x65` → `li r9,0`, which removes the 0x65/0x66 errors.
+  Their bdp_BDVD.self changes are only the Cinavia stubs (0x15ECD0/0x15ECFC → blr).
+- The plugin loads only when a disc goes in and comes fresh from flash each time, so a boot-time setmem (like the RGB fix) can't
+  patch it; Cobra patches it at module load. To verify live, insert a DVD and search VSH memory for `808100743860000139200067`
+  (patched) vs `808100744BFFFE3539200067` (original).
+- Not covered: RCE discs (they read the player region from SPRM20). For those, use webMAN Setup → DVD region (Cobra
+  dvd_video_region, which fakes syscall 867 0x19004 buf[3] for _main_bdp_BDVD.self).

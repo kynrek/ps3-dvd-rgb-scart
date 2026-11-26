@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read VSH memory on the PS3 through webMAN's getmem.ps3mapi page. vshmem.py <hexaddr> <len>"""
-import sys, re, urllib.request
-IP = '192.168.1.239'; PID = '0x1000300'
+import os, sys, re, urllib.request
+IP = os.environ.get('PS3_IP', '192.168.1.239'); PID = '0x1000300'
 def read(addr, n):
     out = b''
     while n > 0:
