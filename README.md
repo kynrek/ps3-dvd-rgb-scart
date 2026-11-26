@@ -23,6 +23,6 @@ It was tested on a real console: DVDs play in correct colour over RGB SCART.
 - `WORKLOG.md`: the full investigation. `NOTES.md`: notes taken along the way.
 
 **Addresses apply to 4.92 and 4.93 CEX VSH**, and the patch bytes are identical on both. Every patch site matches, and
-the log buffer at `0x751600` is free on both. 4.92 was tested on a console. 4.93 was checked against Sony's official 4.93 and
+the log buffer at `0x751600` is free on both. 4.92 was tested on a console. 4.93 was checked against Sony's official 4.93 and is now confirmed on a console too; it was checked against
 Evilnat's 4.93 CEX vsh.self (Evilnat's changes don't touch the patched code or the free areas).
 On any other firmware the scripts do nothing. No Sony firmware files, keys or console data are included.

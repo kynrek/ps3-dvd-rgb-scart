@@ -177,3 +177,16 @@ signal. The DVD framebuffer format (0x10) evidently still converts correctly ont
 - The unified cave was reapplied on 4.92 with ps3-dvd-rgb-apply.sh and verified. fix-4.93.bat is now enabled on the PS3 (the `.off` copy was removed).
 - Gotcha: webMAN refuses `/mount.ps3/<script>` while a game is running ("Error! Click to quit the game").
   Run script tests from the XMB.
+
+## 14. Upgraded to Evilnat 4.93 CEX (2026-11-26)
+- The update ran from the PS3 HDD, with no USB stick:
+  - Uploaded the PUP to `/dev_hdd0/GAMES/PS3UPDATE_493/PS3/UPDATE/PS3UPDAT.PUP` over FTP; its MD5 on the console matched.
+  - Mounted the folder as a disc with `http://<ps3>/mount.ps3/dev_hdd0/GAMES/PS3UPDATE_493`.
+  - XMB → System Update → Update via Storage Media found it on the "disc".
+  - The PS3 went offline after 19 s, and webMAN was back after 254 s.
+- After the update:
+  - version.txt says `release:04.9300`, build 68500 (2026-01-08). webMAN 1.47.48n reports "Firmware: 4.93 CEX Cobra 8.5".
+  - The installed vsh.self sha1 is e487318d…, identical to the checked Evilnat PUP copy.
+  - boot_plugins.txt (webMAN) and autoexec.bat survived.
+  - **The boot script applied the fix by itself.** On 4.93, hook 0x5ded64 = 480DD14C, nomv 0x473a48 = 3BE00000, and the cave is byte-identical; the log is at 0x751600.
+- The PUP is still on the HDD (`/dev_hdd0/GAMES/PS3UPDATE_493`, 206 MB) and in r720 `cfw493/rar/`. Recovery Mode needs it on a USB stick.
