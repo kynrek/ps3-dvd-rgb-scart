@@ -131,3 +131,29 @@ signal. The DVD framebuffer format (0x10) evidently still converts correctly ont
 - Caveat: the script doesn't verify the original bytes. A different 4.92 vsh.self (another CFW build) would need
   the addresses checked again first.
 - The TV's green flash on exit/relaunch was its green input-name banner, not the picture (user, 2026-11-26).
+
+## 11. Before the 4.93 upgrade (2026-11-26)
+- GitHub: private repo https://github.com/kynrek/ps3-dvd-rgb-scart (`~/projects/ps3-dvd-rgb-scart`).
+  It has the docs, scripts, packet logs and autoexec.bat. The SCE package key was removed from ps3fw.py (env var), along with the MAC.
+- Backups in `backup/`:
+  - the NOR dump;
+  - `devflash_4.92_20261126/` (dev_flash, dev_flash2, dev_flash3);
+  - `hdd0_config_20261126/` (autoexec.bat, boot_plugins.txt, the webMAN sprx files, wm_config.bin, cobra_cfg.bin).
+- The current CFW is Evilnat 4.92 CEX Cobra 8.5. The network-menu XML points at evilnat.github.io, and that site is now 404.
+- WARNING: github.com/PlayStation-3-Slim-Evilnat-CFW is a FAKE Evilnat org. Its README is copied from PS3HEN, and its download button goes
+  to a third-party file host. Don't use it. Real releases: the Evilnat thread on PSX-Place (it blocks automated fetches).
+
+## 12. 4.93 support (prepared 2026-11-26, before the upgrade)
+- Official 4.93 VSH vs the console's 4.92 VSH: same segment layout. 14,429 of 1.75M code words differ, mostly TOC/data
+  offsets. The patched functions (sys_uart_send wrapper 0x5ded54, FUN_00473a28) and the cave area are byte-identical.
+  The 4.93 bss is 0xc0 bytes longer (ends 0x751548 instead of 0x751488), so on 4.93 the packet log moves to **0x751600**.
+  The 4.93 cave differs from the 4.92 one in a single word (0x6bbf88, `ori r9,r9,0x1600`).
+- `scripts/mkcave_fix.py --fw=4.92|4.93` and `scripts/mkbat.py` generate:
+  - `ps3files/autoexec.bat`: waits for the XMB, skips if L1 is held, then `call`s both version scripts;
+  - `ps3files/ps3-dvd-rgb/fix-4.92.bat` and `fix-4.93.bat`: each starts with `abort if not Firmware X`.
+- On the PS3: `/dev_hdd0/autoexec.bat`, `/dev_hdd0/ps3-dvd-rgb/fix-4.92.bat`, and `fix-4.93.bat.off`.
+  The 4.93 script stays switched off until the upgraded console's VSH bytes have been checked live. Then rename it to `fix-4.93.bat`.
+- Tested on 4.92: I removed the patches and ran the dispatcher, and they were reapplied (cave identical). Running fix-4.93.bat directly
+  on 4.92 aborted with no writes (the 0x751600 marker and the cave were unchanged).
+- `scripts/ps3-dvd-rgb-apply.sh` reads the firmware from webMAN's cpursx page and supports both versions.
+  `PS3FW=4.93 readlog.py` reads the 4.93 log.

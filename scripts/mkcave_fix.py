@@ -4,6 +4,9 @@ import re, sys
 from keystone import *
 from capstone import *
 CAVE=0x6bbeb0; RET=0x5ded68
+# Packet-log buffer in the unused bss page tail: 4.92 bss ends 0x751488, 4.93 bss ends 0x751548.
+LOGS={'4.92':0x751500,'4.93':0x751600}
+FW=next((a.split('=')[1] for a in sys.argv if a.startswith('--fw=')),'4.92'); LOG=LOGS[FW]
 fix=f"""
   rldicl r5, r3, 0, 32
   lwz r0, 4(r5)
@@ -64,8 +67,8 @@ B2:
   add r6, r6, r10
   b B1
 LOG:
-  lis r9, 0x75
-  ori r9, r9, 0x1500
+  lis r9, {LOG>>16:#x}
+  ori r9, r9, {LOG&0xffff:#x}
   lwz r10, 0(r9)
   lwz r0, 4(r5)
   rlwinm r0, r0, 0, 0, 30
