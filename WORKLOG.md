@@ -157,3 +157,23 @@ signal. The DVD framebuffer format (0x10) evidently still converts correctly ont
   on 4.92 aborted with no writes (the 0x751600 marker and the cave were unchanged).
 - `scripts/ps3-dvd-rgb-apply.sh` reads the firmware from webMAN's cpursx page and supports both versions.
   `PS3FW=4.93 readlog.py` reads the 4.93 log.
+
+## 13. Evilnat 4.93 CEX PUP checked; scripts unified (2026-11-26)
+- The user sent `CFW 4.93 Evilnat Cobra 8.5 [CEX].rar` over LocalSend (sha256 8735f814…). It contained README.txt, md5.txt and PS3/UPDATE/PS3UPDAT.PUP.
+  The PUP MD5 d3af31ce6bdbc6790a5504cf8b3da1b2 matches md5.txt, but that only proves it wasn't damaged.
+  Extracted to `cfw493/` (rar/, pup/, upd/, flash/ decrypted).
+- Compared with Sony's official 4.93 (downloaded from Sony's server):
+  - The PUP version string is "4.93 Evilnat [CEX]".
+  - The package list is the same. CORE_OS and the dev_flash packages differ.
+  - dev_flash: +37 / -2 / ~44 files, all the usual Evilnat set: stage2 Cobra, xai_plugin, trophy_unlocker, videorec,
+    patched bdplayer/emus/plugins, icons, XMB XMLs. Every Evilnat addition is also on the console's current Evilnat 4.92.
+  - vsh.self: 249 changed code words and 1 data word versus OFW. None are near 0x5ded54, 0x473a28 or 0x472xxx, and none
+    reference the cave or the bss tail. The patch-site bytes are original. Segments are identical in size to OFW 4.93.
+- webMAN MOD (latest source, LATEST_CFW 4.92) has no 4.93 build-date constant. On 4.93 it falls back to
+  `get_firmware_version()` (syscall platform info), and I couldn't confirm statically which string that produces.
+  So the log address is now **0x751600 on both versions**: it's free on both, because bss ends at 0x751488 on 4.92 and 0x751548 on 4.93.
+  fix-4.92.bat and fix-4.93.bat now write byte-identical patches, so a misreported 4.92/4.93 is harmless. Any other
+  string means nothing gets applied, which is safe.
+- The unified cave was reapplied on 4.92 with ps3-dvd-rgb-apply.sh and verified. fix-4.93.bat is now enabled on the PS3 (the `.off` copy was removed).
+- Gotcha: webMAN refuses `/mount.ps3/<script>` while a game is running ("Error! Click to quit the game").
+  Run script tests from the XMB.

@@ -6,7 +6,7 @@ S="http://$IP/setmem.ps3mapi?proc=0x1000300&oper=0"
 rd() { python3 -I "$DIR/vshmem.py" "$1" 4 2>/dev/null | awk '{print $2}'; }
 page=$(curl -s -m 8 "http://$IP/cpursx.ps3") || exit 1
 FW=$(echo "$page" | sed 's/<[^>]*>/ /g' | grep -oE "Firmware ?: ?4\.9[0-9]" | grep -oE "4\.9[0-9]" | head -1)
-case "$FW" in 4.92) LOG=751500;; 4.93) LOG=751600;; *) echo "unsupported firmware '$FW'"; exit 2;; esac
+case "$FW" in 4.92|4.93) LOG=751600;; *) echo "unsupported firmware '$FW'"; exit 2;; esac
 hook=$(rd 5ded64); mv=$(rd 473a48); pre=$(rd 5ded60)
 [ "$hook" = 480dd14c ] && [ "$mv" = 3be00000 ] && { echo "already applied ($FW)"; exit 0; }
 [ "$pre" = f8010010 ] || { echo "unexpected bytes at 0x5ded60: $pre"; exit 2; }

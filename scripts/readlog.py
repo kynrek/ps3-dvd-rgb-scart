@@ -1,7 +1,7 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import vshmem
 import os
-B = 0x751600 if os.environ.get("PS3FW") == "4.93" else 0x751500  # log base: 4.92 0x751500, 4.93 0x751600
+B = 0x751600  # log base (same on 4.92 and 4.93)
 end = vshmem.u32(B); d = vshmem.read(B, min(end + 8, 0x9f8))
 off = 0; i = 0
 while off < end:

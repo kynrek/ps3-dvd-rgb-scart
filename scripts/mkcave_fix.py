@@ -5,7 +5,7 @@ from keystone import *
 from capstone import *
 CAVE=0x6bbeb0; RET=0x5ded68
 # Packet-log buffer in the unused bss page tail: 4.92 bss ends 0x751488, 4.93 bss ends 0x751548.
-LOGS={'4.92':0x751500,'4.93':0x751600}
+LOGS={'4.92':0x751600,'4.93':0x751600}  # 0x751600 is free on both (bss ends 0x751488 / 0x751548): identical cave on both
 FW=next((a.split('=')[1] for a in sys.argv if a.startswith('--fw=')),'4.92'); LOG=LOGS[FW]
 fix=f"""
   rldicl r5, r3, 0, 32

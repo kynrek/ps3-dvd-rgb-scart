@@ -2,7 +2,7 @@
 import subprocess, sys, os
 PY = sys.executable; HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, '..', 'ps3files')
 U = '/setmem.ps3mapi?proc=0x1000300&oper=0'
-VERS = {'4.92': 0x751500, '4.93': 0x751600}
+VERS = {'4.92': 0x751600, '4.93': 0x751600}
 def cave(fw):
     out = subprocess.run([PY, '-I', os.path.join(HERE, 'mkcave_fix.py'), f'--fw={fw}'], capture_output=True, text=True, check=True).stdout
     return next(l for l in out.split() if len(l) > 40)
